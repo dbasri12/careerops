@@ -73,8 +73,3 @@ node server.js
 
 Then open `http://localhost:3747`.
 
-## Notes For GitHub
-
-- `node_modules/` is ignored and should not be committed
-- The screenshot used in this README lives at `assets/career-ops-screenshot.png`
-- This repo is best presented as a local productivity app rather than a deploy-to-cloud service

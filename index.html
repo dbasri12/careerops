@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Career-Ops</title>
+<style>
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff; --bg2: #f5f4f1; --bg3: #eeede9;
+  --text: #1a1a18; --text2: #6b6b67; --text3: #9b9b97;
+  --border: rgba(0,0,0,0.10); --border2: rgba(0,0,0,0.18);
+  --radius: 8px; --radius-lg: 12px;
+  --green: #3B6D11; --green-bg: #EAF3DE;
+  --blue: #185FA5; --blue-bg: #E6F1FB;
+  --amber: #854F0B; --amber-bg: #FAEEDA;
+  --red: #A32D2D; --red-bg: #FCEBEB;
+  --teal: #0F6E56; --teal-bg: #E1F5EE;
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
+    --text: #e8e8e4; --text2: #9b9b97; --text3: #6b6b67;
+    --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.18);
+    --green: #97C459; --green-bg: #1a2e09;
+    --blue: #85B7EB; --blue-bg: #0c1e35;
+    --amber: #EF9F27; --amber-bg: #2e1f08;
+    --red: #F09595; --red-bg: #2d0f0f;
+    --teal: #5DCAA5; --teal-bg: #04201a;
+  }
+}
+body { font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); line-height: 1.6; }
+input, select, textarea, button { font-family: var(--font); font-size: 14px; color: var(--text); }
+
+/* ── Layout ── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+.sidebar { width: 210px; min-width: 210px; background: var(--bg2); border-right: 0.5px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ── Sidebar ── */
+.sb-logo { padding: 16px 16px 12px; border-bottom: 0.5px solid var(--border); }
+.sb-logo h1 { font-size: 15px; font-weight: 500; letter-spacing: -0.3px; }
+.sb-logo p { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.sb-logo .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ccc; margin-right: 5px; vertical-align: middle; }
+.sb-logo .status-dot.online { background: #639922; }
+.sb-section { padding: 10px 14px 3px; font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; }
+.sb-item { display: flex; align-items: center; gap: 8px; padding: 7px 14px; cursor: pointer; font-size: 13px; color: var(--text2); border-left: 2px solid transparent; transition: all .12s; white-space: nowrap; }
+.sb-item:hover { background: var(--bg); color: var(--text); }
+.sb-item.active { background: var(--bg); color: var(--text); border-left-color: var(--text); }
+.sb-item .ico { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.sb-bottom { margin-top: auto; padding: 12px 14px; border-top: 0.5px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.sb-bottom label { font-size: 11px; color: var(--text3); }
+.sb-bottom input { width: 100%; padding: 5px 8px; border: 0.5px solid var(--border2); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 12px; }
+
+/* ── Topbar ── */
+.topbar { padding: 11px 20px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--bg); flex-shrink: 0; }
+.topbar h2 { font-size: 14px; font-weight: 500; }
+.topbar .badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; background: var(--blue-bg); color: var(--blue); margin-left: auto; }
+
+/* ── Content ── */
+.content { flex: 1; overflow-y: auto; padding: 18px 20px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── Form elements ── */
+textarea { width: 100%; padding: 9px 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); resize: vertical; line-height: 1.5; }
+textarea:focus, input:focus, select:focus { outline: none; border-color: var(--text3); }
+input[type=text], input[type=password] { padding: 7px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); width: 100%; }
+select { padding: 7px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); cursor: pointer; }
+
+/* ── Buttons ── */
+.btn { padding: 7px 16px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); cursor: pointer; transition: all .12s; }
+.btn:hover { background: var(--bg2); }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-primary:hover { opacity: 0.82; background: var(--text); }
+.btn-sm { padding: 4px 11px; font-size: 12px; }
+.btn-danger { border-color: var(--red); color: var(--red); }
+.btn-danger:hover { background: var(--red-bg); }
+
+/* ── Cards ── */
+.card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 14px; }
+.card h3 { font-size: 13px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--bg2); border: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.step-num.done { background: #3B6D11; border-color: #3B6D11; color: #fff; }
+
+/* ── Alerts ── */
+.alert { padding: 9px 13px; border-radius: var(--radius); font-size: 13px; margin-bottom: 12px; }
+.alert-warn { background: var(--amber-bg); color: var(--amber); border: 0.5px solid rgba(186,117,23,0.3); }
+.alert-info { background: var(--blue-bg); color: var(--blue); border: 0.5px solid rgba(55,138,221,0.3); }
+.alert-success { background: var(--green-bg); color: var(--green); border: 0.5px solid rgba(99,153,34,0.3); }
+.alert-error { background: var(--red-bg); color: var(--red); border: 0.5px solid rgba(226,75,74,0.3); }
+
+/* ── Result display ── */
+.result-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 12px; }
+.result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+.result-title { font-size: 15px; font-weight: 500; }
+.result-actions { display: flex; gap: 6px; }
+.score-badge { font-size: 12px; font-weight: 500; padding: 3px 11px; border-radius: 20px; }
+.sg-a { background: var(--green-bg); color: var(--green); }
+.sg-b { background: var(--blue-bg); color: var(--blue); }
+.sg-c { background: var(--amber-bg); color: var(--amber); }
+.sg-d, .sg-f { background: var(--red-bg); color: var(--red); }
+.result-body { font-size: 13px; color: var(--text2); line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+.result-body.streaming { border-left: 2px solid var(--border2); padding-left: 13px; }
+
+/* ── Loading ── */
+.loading { display: flex; align-items: center; gap: 9px; color: var(--text2); font-size: 13px; padding: 14px 0; }
+.spinner { width: 15px; height: 15px; border: 2px solid var(--border); border-top-color: var(--text2); border-radius: 50%; animation: spin .65s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Tracker table ── */
+.table-wrap { overflow-x: auto; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 9px 12px; text-align: left; font-weight: 500; font-size: 11px; color: var(--text2); border-bottom: 0.5px solid var(--border); background: var(--bg2); white-space: nowrap; }
+td { padding: 8px 12px; border-bottom: 0.5px solid var(--border); color: var(--text); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg2); }
+.spill { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; white-space: nowrap; }
+.sp-evaluated { background: var(--blue-bg); color: var(--blue); }
+.sp-applied { background: var(--green-bg); color: var(--green); }
+.sp-interview { background: var(--amber-bg); color: var(--amber); }
+.sp-offer { background: var(--teal-bg); color: var(--teal); }
+.sp-rejected { background: var(--red-bg); color: var(--red); }
+.sp-skip, .sp-discarded { background: var(--bg2); color: var(--text3); }
+
+/* ── Forms layout ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 11px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 11px; color: var(--text2); }
+.flex-row { display: flex; align-items: center; gap: 9px; }
+.grow { flex: 1; }
+.flash-ok { font-size: 12px; color: #639922; margin-left: 6px; opacity: 0; transition: opacity .25s; }
+.flash-ok.show { opacity: 1; }
+
+/* ── Empty state ── */
+.empty { text-align: center; padding: 44px 20px; color: var(--text2); font-size: 13px; }
+.empty .e-icon { font-size: 28px; margin-bottom: 10px; }
+
+/* ── Portals grid ── */
+.portals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.portal-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 11px 13px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+.portal-card .company { font-weight: 500; }
+.portal-card .portal-url { font-size: 11px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+.portal-card .remove-btn { color: var(--text3); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; }
+.portal-card .remove-btn:hover { color: var(--red); }
+.scan-result { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 13px; margin-bottom: 8px; }
+.scan-result h4 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.scan-job { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+.scan-job:last-child { border-bottom: none; }
+.scan-job a { color: var(--blue); text-decoration: none; flex: 1; }
+.scan-job a:hover { text-decoration: underline; }
+
+/* ── CV preview / PDF ── */
+.cv-preview { background: #fff; color: #1a1a18; border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 32px 36px; font-family: 'Georgia', serif; line-height: 1.6; margin-bottom: 12px; max-width: 800px; }
+.cv-preview h1 { font-size: 22px; font-weight: 600; margin-bottom: 2px; }
+.cv-preview h2 { font-size: 14px; font-weight: 600; border-bottom: 1px solid #ccc; padding-bottom: 3px; margin: 16px 0 8px; text-transform: uppercase; letter-spacing: .5px; }
+.cv-preview h3 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.cv-preview p { font-size: 13px; margin-bottom: 6px; }
+.cv-preview ul { font-size: 13px; padding-left: 18px; }
+.cv-preview li { margin-bottom: 3px; }
+.cv-preview .contact { font-size: 12px; color: #555; margin-bottom: 4px; }
+
+/* ── Tabs ── */
+.tabs { display: flex; gap: 2px; border-bottom: 0.5px solid var(--border); margin-bottom: 16px; }
+.tab { padding: 7px 14px; font-size: 13px; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+
+/* ── Misc ── */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; }
+.section-header h3 { font-size: 14px; font-weight: 500; }
+details summary { cursor: pointer; font-size: 13px; color: var(--text2); padding: 6px 0; }
+details[open] summary { color: var(--text); }
+.kbd { display: inline-block; font-size: 11px; padding: 1px 6px; border: 0.5px solid var(--border2); border-radius: 4px; background: var(--bg2); color: var(--text2); font-family: monospace; }
+.divider { border: none; border-top: 0.5px solid var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ── Sidebar ── -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <h1>Career-Ops</h1>
+      <p><span class="status-dot" id="server-dot"></span><span id="server-label">Checking server...</span></p>
+    </div>
+
+    <div class="sb-section">Pipeline</div>
+    <div class="sb-item active" data-panel="evaluate" onclick="nav(this)"><span class="ico">⚡</span>Evaluate offer</div>
+    <div class="sb-item" data-panel="batch" onclick="nav(this)"><span class="ico">📦</span>Batch evaluate</div>
+    <div class="sb-item" data-panel="scan" onclick="nav(this)"><span class="ico">🔭</span>Portal scanner</div>
+    <div class="sb-item" data-panel="tracker" onclick="nav(this)"><span class="ico">📋</span>Tracker</div>
+
+    <div class="sb-section">Generate</div>
+    <div class="sb-item" data-panel="cv" onclick="nav(this)"><span class="ico">📄</span>Tailor CV + PDF</div>
+    <div class="sb-item" data-panel="interview" onclick="nav(this)"><span class="ico">🎯</span>Interview prep</div>
+    <div class="sb-item" data-panel="stories" onclick="nav(this)"><span class="ico">📖</span>Story bank</div>
+
+    <div class="sb-section">Research</div>
+    <div class="sb-item" data-panel="deep" onclick="nav(this)"><span class="ico">🔍</span>Deep research</div>
+    <div class="sb-item" data-panel="negotiate" onclick="nav(this)"><span class="ico">💬</span>Negotiation</div>
+    <div class="sb-item" data-panel="contact" onclick="nav(this)"><span class="ico">✉</span>Outreach</div>
+
+    <div class="sb-section">Setup</div>
+    <div class="sb-item" data-panel="setup" onclick="nav(this)"><span class="ico">⚙</span>Profile & CV</div>
+
+    <div class="sb-bottom">
+      <div>
+        <label>Anthropic API key</label>
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-..." oninput="saveApiKey()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <div class="main">
+    <div class="topbar">
+      <h2 id="topbar-title">Evaluate offer</h2>
+      <span class="badge" id="topbar-badge">Auto-pipeline</span>
+    </div>
+    <div class="content">
+
+      <!-- ════════════════ EVALUATE ════════════════ -->
+      <div class="panel active" id="panel-evaluate">
+        <div id="eval-warn"></div>
+        <div class="card">
+          <div style="margin-bottom:10px">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px">Job description, URL, or paste raw text</label>
+            <textarea id="jdInput" rows="5" placeholder="Paste a job URL and I'll scrape it automatically, or paste the job description directly..."></textarea>
+          </div>
+          <div class="flex-row">
+            <select id="evalMode">
+              <option value="full">Full pipeline (evaluate + tracker entry)</option>
+              <option value="evaluate">Evaluate only (A–F score + 6 blocks)</option>
+              <option value="interview">Interview prep (STAR stories)</option>
+              <option value="apply">Fill application answers</option>
+            </select>
+            <div class="grow"></div>
+            <button class="btn btn-primary" onclick="runEval()">Run ↗</button>
+          </div>
+        </div>
+        <div id="eval-results"></div>
+      </div>
+
+      <!-- ════════════════ BATCH ════════════════ -->
+      <div class="panel" id="panel-batch">
+        <div class="card">
+          <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px">One job per line — URL or pasted description</label>
+          <textarea id="batchInput" rows="8" placeholder="https://jobs.ashby.io/acme/senior-ai-engineer&#10;https://greenhouse.io/company/role-2&#10;Senior ML Engineer at Acme — 5+ years experience..."></textarea>
+          <div class="flex-row" style="margin-top:10px">
+            <span id="batchCount" style="font-size:12px;color:var(--text2)">0 offers queued</span>
+            <div class="grow"></div>
+            <button class="btn btn-primary" onclick="runBatch()">Evaluate all ↗</button>
+          </div>
+        </div>
+        <div id="batch-results"></div>
+      </div>
+
+      <!-- ════════════════ SCAN ════════════════ -->
+      <div class="panel" id="panel-scan">
+        <div class="tabs">
+          <div class="tab active" onclick="scanTab(this,'scan-portals')">My portals</div>
+          <div class="tab" onclick="scanTab(this,'scan-results-tab')">Results</div>
+        </div>
+        <div id="scan-portals">
+          <div class="section-header">
+            <h3>Configured portals</h3>
+            <button class="btn btn-sm" onclick="runScan()">Scan all ↗</button>
+          </div>
+          <div id="scan-server-warn" class="alert alert-warn" style="display:none">Server offline — portal scanning requires the local server. Run <span class="kbd">node server.js</span> first.</div>
+          <div class="card" style="padding:12px">
+            <div class="flex-row" style="margin-bottom:10px">
+              <input type="text" id="addPortalName" placeholder="Company name" style="flex:1" />
+              <input type="text" id="addPortalUrl" placeholder="https://company.com/careers" style="flex:2" />
+              <button class="btn btn-sm" onclick="addPortal()">Add</button>
+            </div>
+            <div id="portals-list"></div>
+          </div>
+          <details>
+            <summary>Preset portals (click to load 45+ companies)</summary>
+            <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px" id="preset-list"></div>
+          </details>
+        </div>
+        <div id="scan-results-tab" style="display:none">
+          <div id="scan-output" class="empty"><div class="e-icon">🔭</div>No scan results yet. Go to "My portals" and click Scan all.</div>
+        </div>
+      </div>
+
+      <!-- ════════════════ TRACKER ════════════════ -->
+      <div class="panel" id="panel-tracker">
+        <div class="section-header">
+          <span id="tracker-count" style="font-size:13px;color:var(--text2)">0 applications</span>
+          <div class="flex-row">
+            <select id="tracker-filter" onchange="renderTracker()" style="font-size:12px;padding:4px 8px">
+              <option value="">All statuses</option>
+              <option value="Evaluated">Evaluated</option>
+              <option value="Applied">Applied</option>
+              <option value="Interview">Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+              <option value="SKIP">SKIP</option>
+            </select>
+            <button class="btn btn-sm" onclick="exportTSV()">Export TSV</button>
+          </div>
+        </div>
+        <div id="tracker-wrap"></div>
+      </div>
+
+      <!-- ════════════════ CV + PDF ════════════════ -->
+      <div class="panel" id="panel-cv">
+        <div class="tabs">
+          <div class="tab active" onclick="cvTab(this,'cv-generate')">Generate</div>
+          <div class="tab" onclick="cvTab(this,'cv-preview-tab')">Preview & PDF</div>
+        </div>
+        <div id="cv-generate">
+          <div class="card">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px">Job description to tailor the CV for</label>
+            <textarea id="cvJdInput" rows="5" placeholder="Paste the job description (or URL to scrape)..."></textarea>
+            <div class="flex-row" style="margin-top:10px">
+              <button class="btn btn-primary" onclick="runCvGen()">Generate tailored CV ↗</button>
+            </div>
+          </div>
+          <div id="cv-gen-result"></div>
+        </div>
+        <div id="cv-preview-tab" style="display:none">
+          <div class="section-header">
+            <h3>CV preview</h3>
+            <div class="flex-row">
+              <button class="btn btn-sm" onclick="downloadPDF()">Download PDF ↗</button>
+            </div>
+          </div>
+          <div id="cv-server-warn" class="alert alert-warn" style="display:none">PDF export requires the local server. Run <span class="kbd">node server.js</span> to enable PDF generation.</div>
+          <div id="cv-html-preview"></div>
+        </div>
+      </div>
+
+      <!-- ════════════════ INTERVIEW ════════════════ -->
+      <div class="panel" id="panel-interview">
+        <div class="card">
+          <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px">Job description for targeted interview prep</label>
+          <textarea id="interviewJd" rows="5" placeholder="Paste job description here..."></textarea>
+          <div class="flex-row" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="runSimple('interview','interviewJd','interview-results')">Generate prep ↗</button>
+          </div>
+        </div>
+        <div id="interview-results"></div>
+      </div>
+
+      <!-- ════════════════ STORIES ════════════════ -->
+      <div class="panel" id="panel-stories">
+        <div class="section-header">
+          <h3>Master STAR+R story bank</h3>
+          <button class="btn btn-sm" onclick="genStories()">Regenerate ↗</button>
+        </div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Versatile behavioral stories extracted from your CV — ready to answer any interview question.</p>
+        <div id="stories-container">
+          <div class="empty"><div class="e-icon">📖</div>No stories yet. Run an evaluation or click Regenerate.</div>
+        </div>
+      </div>
+
+      <!-- ════════════════ DEEP RESEARCH ════════════════ -->
+      <div class="panel" id="panel-deep">
+        <div class="card">
+          <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px">Company name or job URL</label>
+          <textarea id="deepInput" rows="3" placeholder="Anthropic — or paste a job URL to research the company automatically..."></textarea>
+          <div class="flex-row" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="runSimple('deep','deepInput','deep-results')">Research ↗</button>
+          </div>
+        </div>
+        <div id="deep-results"></div>
+      </div>
+
+      <!-- ════════════════ NEGOTIATE ════════════════ -->
+      <div class="panel" id="panel-negotiate">
+        <div class="card">
+          <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px">Describe the offer and what you want to negotiate</label>
+          <textarea id="negotiateInput" rows="5" placeholder="Offer: $140k base, 0.08% equity, Series B. I was expecting $160k. They mentioned a 20% geographic discount because I'm in Jakarta. I have a competing offer at $145k from another company..."></textarea>
+          <div class="flex-row" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="runSimple('negotiate','negotiateInput','negotiate-results')">Generate scripts ↗</button>
+          </div>
+        </div>
+        <div id="negotiate-results"></div>
+      </div>
+
+      <!-- ════════════════ OUTREACH ════════════════ -->
+      <div class="panel" id="panel-contact">
+        <div class="card">
+          <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px">Paste the job posting or describe who you're reaching out to</label>
+          <textarea id="contactInput" rows="5" placeholder="Senior ML Engineer at Anthropic. The hiring manager is the Head of Applied AI. I want to reach out on LinkedIn before applying..."></textarea>
+          <div class="flex-row" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="runSimple('contact','contactInput','contact-results')">Generate outreach ↗</button>
+          </div>
+        </div>
+        <div id="contact-results"></div>
+      </div>
+
+      <!-- ════════════════ SETUP ════════════════ -->
+      <div class="panel" id="panel-setup">
+        <div class="card">
+          <h3><span class="step-num" id="s1">1</span> Your CV</h3>
+          <textarea id="cvRaw" rows="12" placeholder="Paste your full CV here. Plain text or markdown. The more detail, the better the evaluations.&#10;&#10;Example:&#10;# Jane Smith&#10;jane@email.com | Jakarta, Indonesia&#10;&#10;## Experience&#10;Senior AI Engineer — Acme Corp (2021–present)&#10;- Built RAG pipeline serving 50k daily queries..."></textarea>
+          <div class="flex-row" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="saveCv()">Save CV</button>
+            <span class="flash-ok" id="cv-ok">Saved</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3><span class="step-num" id="s2">2</span> Profile</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>Full name</label><input type="text" id="pName" placeholder="Jane Smith" /></div>
+            <div class="form-group"><label>Email</label><input type="text" id="pEmail" placeholder="jane@email.com" /></div>
+            <div class="form-group"><label>Location</label><input type="text" id="pLocation" placeholder="Jakarta, Indonesia" /></div>
+            <div class="form-group"><label>Timezone</label><input type="text" id="pTz" placeholder="WIB (UTC+7)" /></div>
+            <div class="form-group"><label>Target roles</label><input type="text" id="pRoles" placeholder="Head of AI, Applied AI Lead" /></div>
+            <div class="form-group"><label>Salary target</label><input type="text" id="pSalary" placeholder="$120k–$160k" /></div>
+          </div>
+          <div class="form-group" style="margin-bottom:10px">
+            <label>Career summary / what makes you different</label>
+            <textarea id="pSummary" rows="3" placeholder="Former founder, 8 years in AI/automation. Built products used by 50k+ users. Strong on applied LLMs and agentic systems."></textarea>
+          </div>
+          <div class="flex-row">
+            <button class="btn btn-primary" onclick="saveProfile()">Save profile</button>
+            <span class="flash-ok" id="profile-ok">Saved</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3><span class="step-num" id="s3">3</span> Proof points (optional but powerful)</h3>
+          <textarea id="pProofs" rows="6" placeholder="Key achievements with metrics. These get injected into every evaluation.&#10;&#10;- Reduced ML inference latency 60% via batching + quantization (Acme, 2023)&#10;- Built agentic document pipeline processing 10k docs/day at 94% accuracy&#10;- Led team of 6 engineers, shipped 4 major product features on time&#10;- Open source repo: 2.1k GitHub stars"></textarea>
+          <div class="flex-row" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="saveProofs()">Save</button>
+            <span class="flash-ok" id="proofs-ok">Saved</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const SERVER = 'http://localhost:3747';
+
+const PANEL_META = {
+  evaluate: { title: 'Evaluate offer', badge: 'Auto-pipeline' },
+  batch:    { title: 'Batch evaluate', badge: 'Parallel' },
+  scan:     { title: 'Portal scanner', badge: 'Playwright' },
+  tracker:  { title: 'Application tracker', badge: 'Pipeline' },
+  cv:       { title: 'Tailor CV + PDF', badge: 'ATS-optimized' },
+  interview:{ title: 'Interview prep', badge: 'STAR+R' },
+  stories:  { title: 'Story bank', badge: 'Behavioral' },
+  deep:     { title: 'Deep research', badge: 'Company intel' },
+  negotiate:{ title: 'Negotiation', badge: 'Scripts' },
+  contact:  { title: 'LinkedIn outreach', badge: 'Message' },
+  setup:    { title: 'Profile & CV', badge: 'Setup' },
+};
+
+const DEFAULT_PORTALS = [
+  { name: 'Anthropic', url: 'https://www.anthropic.com/careers' },
+  { name: 'OpenAI', url: 'https://openai.com/careers' },
+  { name: 'ElevenLabs', url: 'https://elevenlabs.io/careers' },
+  { name: 'Mistral', url: 'https://mistral.ai/company/careers/' },
+  { name: 'Cohere', url: 'https://cohere.com/careers' },
+  { name: 'Retool', url: 'https://retool.com/careers' },
+  { name: 'Vercel', url: 'https://vercel.com/careers' },
+  { name: 'Linear', url: 'https://linear.app/careers' },
+  { name: 'Notion', url: 'https://www.notion.so/careers' },
+  { name: 'Figma', url: 'https://www.figma.com/careers/' },
+  { name: 'n8n', url: 'https://n8n.io/careers/' },
+  { name: 'Langfuse', url: 'https://langfuse.com/careers' },
+];
+
+const PROMPT_FILES = {
+  eval: 'prompts/eval.md',
+  cv: 'prompts/cv.md',
+  interview: 'prompts/interview.md',
+  deep: 'prompts/deep.md',
+  negotiate: 'prompts/negotiate.md',
+  contact: 'prompts/contact.md',
+  apply: 'prompts/apply.md',
+  stories: 'prompts/stories.md',
+};
+
+const PROMPT_LOAD_HELP = 'Prompt files are stored under /prompts as Markdown files. Open the app through the local server so the browser can fetch them.';
+
+// ══════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════
+let db = {};
+function loadDb() {
+  try { db = JSON.parse(localStorage.getItem('career-ops') || '{}'); } catch { db = {}; }
+  if (!db.tracker) db.tracker = [];
+  if (!db.portals) db.portals = [...DEFAULT_PORTALS];
+  // Restore inputs
+  if (db.apiKey) document.getElementById('apiKeyInput').value = db.apiKey;
+  if (db.cv) document.getElementById('cvRaw').value = db.cv;
+  if (db.proofs) document.getElementById('pProofs').value = db.proofs;
+  if (db.profile) {
+    const p = db.profile;
+    ['Name','Email','Location','Tz','Roles','Salary','Summary'].forEach(k => {
+      const el = document.getElementById('p'+k);
+      if (el && p[k.toLowerCase()]) el.value = p[k.toLowerCase()];
+    });
+  }
+  updateSteps();
+  renderPortals();
+  renderPresetPortals();
+  renderTracker();
+  updateBatchCount();
+}
+function saveDb() { localStorage.setItem('career-ops', JSON.stringify(db)); }
+function saveApiKey() { db.apiKey = document.getElementById('apiKeyInput').value; saveDb(); }
+function saveCv() { db.cv = document.getElementById('cvRaw').value; saveDb(); flash('cv-ok'); updateSteps(); }
+function saveProfile() {
+  db.profile = {
+    name: document.getElementById('pName').value, email: document.getElementById('pEmail').value,
+    location: document.getElementById('pLocation').value, tz: document.getElementById('pTz').value,
+    roles: document.getElementById('pRoles').value, salary: document.getElementById('pSalary').value,
+    summary: document.getElementById('pSummary').value,
+  };
+  saveDb(); flash('profile-ok'); updateSteps();
+}
+function saveProofs() { db.proofs = document.getElementById('pProofs').value; saveDb(); flash('proofs-ok'); }
+function flash(id) { const el = document.getElementById(id); el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000); }
+function updateSteps() {
+  document.getElementById('s1').className = 'step-num' + (db.cv ? ' done' : '');
+  document.getElementById('s2').className = 'step-num' + (db.profile?.name ? ' done' : '');
+  document.getElementById('s3').className = 'step-num' + (db.proofs ? ' done' : '');
+}
+
+// ══════════════════════════════════════════════
+// SERVER HEALTH
+// ══════════════════════════════════════════════
+let serverOnline = false;
+async function checkServer() {
+  try {
+    const r = await fetch(SERVER + '/api/health', { signal: AbortSignal.timeout(2000) });
+    serverOnline = r.ok;
+  } catch { serverOnline = false; }
+  const dot = document.getElementById('server-dot');
+  const lbl = document.getElementById('server-label');
+  dot.className = 'status-dot' + (serverOnline ? ' online' : '');
+  lbl.textContent = serverOnline ? 'Server online' : 'Server offline';
+}
+setInterval(checkServer, 10000);
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function nav(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const id = el.dataset.panel;
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.getElementById('topbar-title').textContent = PANEL_META[id].title;
+  document.getElementById('topbar-badge').textContent = PANEL_META[id].badge;
+  if (id === 'tracker') renderTracker();
+  if (id === 'stories' && db.stories) renderStories();
+  if (id === 'scan') checkScanServer();
+  if (id === 'evaluate') checkEvalWarns();
+  if (id === 'cv') checkCvServer();
+}
+function scanTab(el, id) {
+  document.querySelectorAll('#panel-scan .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('scan-portals').style.display = id === 'scan-portals' ? 'block' : 'none';
+  document.getElementById('scan-results-tab').style.display = id === 'scan-results-tab' ? 'block' : 'none';
+}
+function cvTab(el, id) {
+  document.querySelectorAll('#panel-cv .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('cv-generate').style.display = id === 'cv-generate' ? 'block' : 'none';
+  document.getElementById('cv-preview-tab').style.display = id === 'cv-preview-tab' ? 'block' : 'none';
+  if (id === 'cv-preview-tab') { checkCvServer(); renderCvPreview(); }
+}
+function checkEvalWarns() {
+  const w = document.getElementById('eval-warn');
+  const warns = [];
+  if (!db.cv) warns.push('No CV set. Go to <strong>Profile & CV</strong> to add your CV first.');
+  if (!db.apiKey) warns.push('No API key. Add your Anthropic key in the bottom-left sidebar.');
+  w.innerHTML = warns.map(m => `<div class="alert alert-warn">${m}</div>`).join('');
+}
+function checkScanServer() {
+  document.getElementById('scan-server-warn').style.display = serverOnline ? 'none' : 'block';
+}
+function checkCvServer() {
+  document.getElementById('cv-server-warn').style.display = serverOnline ? 'none' : 'block';
+}
+
+// ══════════════════════════════════════════════
+// API CALLS
+// ══════════════════════════════════════════════
+function getCtx() {
+  const p = db.profile || {};
+  return `CANDIDATE PROFILE:
+Name: ${p.name || 'Not set'}
+Location: ${p.location || 'Not set'}
+Target roles: ${p.roles || 'Not set'}
+Salary target: ${p.salary || 'Not set'}
+Summary: ${p.summary || 'Not set'}
+
+CV:
+${db.cv || 'No CV provided.'}
+
+PROOF POINTS / KEY ACHIEVEMENTS:
+${db.proofs || 'None provided.'}`.trim();
+}
+
+async function callClaude(system, userMsg, onChunk) {
+  const key = db.apiKey;
+  if (!key) throw new Error('No API key — add it in the sidebar');
+  const endpoint = serverOnline ? SERVER + '/api/claude' : 'https://api.anthropic.com/v1/messages';
+  const headers = { 'Content-Type': 'application/json' };
+  if (serverOnline) headers['x-api-key'] = key;
+  else headers['x-api-key'] = key;
+  // Note: direct browser calls to Anthropic API work from localhost origins in modern browsers
+
+  const body = JSON.stringify({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 2500,
+    stream: true,
+    system,
+    messages: [{ role: 'user', content: userMsg }],
+  });
+
+  const resp = await fetch(endpoint, { method: 'POST', headers, body });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${resp.status}`);
+  }
+
+  const reader = resp.body.getReader();
+  const dec = new TextDecoder();
+  let full = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    for (const line of dec.decode(value).split('\n')) {
+      if (line.startsWith('data:')) {
+        try {
+          const d = JSON.parse(line.slice(5));
+          if (d.type === 'content_block_delta' && d.delta?.text) {
+            full += d.delta.text;
+            if (onChunk) onChunk(full);
+          }
+        } catch {}
+      }
+    }
+  }
+  return full;
+}
+
+async function scrapeUrl(url) {
+  if (!serverOnline) return null;
+  const r = await fetch(SERVER + '/api/scrape', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url }),
+  });
+  return r.ok ? r.json() : null;
+}
+
+// ══════════════════════════════════════════════
+// PROMPTS
+// ══════════════════════════════════════════════
+const P = {};
+let promptLoadPromise = null;
+
+async function loadPrompts() {
+  if (promptLoadPromise) return promptLoadPromise;
+  if (window.location.protocol === 'file:') {
+    throw new Error(PROMPT_LOAD_HELP);
+  }
+
+  promptLoadPromise = (async () => {
+    const loaded = await Promise.all(Object.entries(PROMPT_FILES).map(async ([mode, file]) => {
+      const resp = await fetch(file, { cache: 'no-store' });
+      if (!resp.ok) throw new Error(`Failed to load ${file} (HTTP ${resp.status}). ${PROMPT_LOAD_HELP}`);
+      return [mode, (await resp.text()).trim()];
+    }));
+
+    loaded.forEach(([mode, text]) => { P[mode] = text; });
+    return P;
+  })().catch(err => {
+    promptLoadPromise = null;
+    throw err;
+  });
+
+  return promptLoadPromise;
+}
+
+async function getPrompt(mode) {
+  await loadPrompts();
+  if (!P[mode]) throw new Error(`Missing prompt for mode "${mode}".`);
+  return P[mode];
+}
+
+// ══════════════════════════════════════════════
+// EVALUATE
+// ══════════════════════════════════════════════
+async function runEval() {
+  const raw = document.getElementById('jdInput').value.trim();
+  const mode = document.getElementById('evalMode').value;
+  if (!raw) { alert('Paste a job description or URL first'); return; }
+  if (!db.apiKey) { alert('Add your Anthropic API key in the sidebar'); return; }
+
+  const container = document.getElementById('eval-results');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Analyzing...</div>';
+
+  let jd = raw;
+
+  // Auto-scrape if it looks like a URL
+  if (/^https?:\/\//i.test(raw) && serverOnline) {
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Scraping job page with Playwright...</div>';
+    try {
+      const scraped = await scrapeUrl(raw);
+      if (scraped) {
+        if (scraped.isClosed) {
+          container.innerHTML = '<div class="alert alert-warn">This job posting appears to be closed or no longer active.</div>';
+          return;
+        }
+        jd = `URL: ${raw}\nTitle: ${scraped.title}\n\n${scraped.content}`;
+        container.innerHTML = `<div class="alert alert-success">Scraped: ${scraped.title}</div>`;
+      }
+    } catch (e) {
+      jd = raw; // fall back to passing the URL as text
+    }
+  }
+
+  const ctx = getCtx();
+
+  try {
+    let systemPrompt, userMsg;
+    if (mode === 'full' || mode === 'evaluate') {
+      systemPrompt = await getPrompt('eval');
+      userMsg = `${ctx}\n\n---\nJOB TO EVALUATE:\n${jd}`;
+    } else if (mode === 'interview') {
+      systemPrompt = await getPrompt('interview');
+      userMsg = `${ctx}\n\n---\nJOB:\n${jd}`;
+    } else if (mode === 'apply') {
+      systemPrompt = await getPrompt('apply');
+      userMsg = `${ctx}\n\n---\nJOB / APPLICATION:\n${jd}`;
+    }
+
+    const resultDiv = document.createElement('div');
+    resultDiv.className = 'result-card';
+    resultDiv.innerHTML = '<div class="result-body streaming"></div>';
+    // Clear loading, keep any alert
+    const existingAlert = container.querySelector('.alert');
+    container.innerHTML = '';
+    if (existingAlert) container.appendChild(existingAlert);
+    container.appendChild(resultDiv);
+    const body = resultDiv.querySelector('.result-body');
+
+    const full = await callClaude(systemPrompt, userMsg, partial => { body.textContent = partial; });
+
+    if (full && (mode === 'full' || mode === 'evaluate')) {
+      const scoreMatch = full.match(/Score:\s*([\d.]+)\s*\/\s*5/i);
+      const gradeMatch = full.match(/Grade:\s*([A-F])/i);
+      const compMatch  = full.match(/##\s+(.+?)(?:\s*[—\-])/);
+      if (scoreMatch) {
+        const score = parseFloat(scoreMatch[1]);
+        const grade = gradeMatch ? gradeMatch[1].toUpperCase() : '?';
+        const company = compMatch ? compMatch[1].trim() : 'Offer';
+        resultDiv.insertAdjacentHTML('afterbegin', `
+          <div class="result-header">
+            <span class="result-title">${company}</span>
+            <div class="result-actions">
+              <span class="score-badge sg-${grade.toLowerCase()}">${score}/5 · ${grade}</span>
+              <button class="btn btn-sm" onclick="viewFullReport(this)">Full report</button>
+            </div>
+          </div>`);
+        resultDiv.dataset.report = full;
+        resultDiv.dataset.company = company;
+        addToTracker({ company, score, grade, report: full, url: /^https?:\/\//i.test(raw) ? raw : '' });
+      }
+    }
+    body.classList.remove('streaming');
+  } catch (e) {
+    container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+function viewFullReport(btn) {
+  const card = btn.closest('.result-card');
+  const report = card.dataset.report;
+  const company = card.dataset.company || 'Report';
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>${company}</title>
+<style>body{font-family:system-ui;max-width:820px;margin:40px auto;padding:0 24px;line-height:1.75;color:#1a1a18}
+h1,h2,h3{font-weight:500}h2{font-size:16px;margin:20px 0 8px;border-bottom:1px solid #eee;padding-bottom:4px}
+h3{font-size:14px;margin:14px 0 5px}strong{font-weight:500}pre{white-space:pre-wrap;font-family:inherit;font-size:14px}
+</style></head><body><pre>${report.replace(/</g,'&lt;')}</pre></body></html>`);
+}
+
+// ══════════════════════════════════════════════
+// BATCH
+// ══════════════════════════════════════════════
+async function runBatch() {
+  const raw = document.getElementById('batchInput').value.trim();
+  if (!raw) { alert('Add at least one job'); return; }
+  if (!db.apiKey) { alert('Add your Anthropic API key'); return; }
+
+  const offers = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const container = document.getElementById('batch-results');
+  container.innerHTML = `<div class="loading"><div class="spinner"></div>Processing ${offers.length} offers in parallel...</div>`;
+
+  try {
+    const evalPrompt = await getPrompt('eval');
+    const promises = offers.map(async (offer, i) => {
+      let jd = offer;
+      // Scrape if URL
+      if (/^https?:\/\//i.test(offer) && serverOnline) {
+        try {
+          const scraped = await scrapeUrl(offer);
+          if (scraped && !scraped.isClosed) jd = `URL: ${offer}\n${scraped.content}`;
+        } catch {}
+      }
+
+      const div = document.createElement('div');
+      div.className = 'result-card';
+      div.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Offer ${i+1}</div><div class="result-body streaming"></div>`;
+      const body = div.querySelector('.result-body');
+
+      try {
+        const full = await callClaude(evalPrompt, `${getCtx()}\n\n---\nJOB:\n${jd}`, p => { body.textContent = p; });
+        if (full) {
+          const scoreMatch = full.match(/Score:\s*([\d.]+)\s*\/\s*5/i);
+          const gradeMatch = full.match(/Grade:\s*([A-F])/i);
+          const compMatch  = full.match(/##\s+(.+?)(?:\s*[—\-])/);
+          if (scoreMatch) {
+            const score = parseFloat(scoreMatch[1]);
+            const grade = gradeMatch ? gradeMatch[1].toUpperCase() : '?';
+            const company = compMatch ? compMatch[1].trim() : `Offer ${i+1}`;
+            div.insertAdjacentHTML('afterbegin', `<div class="result-header"><span class="result-title">${company}</span><span class="score-badge sg-${grade.toLowerCase()}">${score}/5 · ${grade}</span></div>`);
+            addToTracker({ company, score, grade, report: full, url: /^https?:\/\//i.test(offer) ? offer : '' });
+          }
+          div.dataset.report = full;
+        }
+        body.classList.remove('streaming');
+      } catch (e) { body.textContent = 'Error: ' + e.message; }
+      return div;
+    });
+
+    const divs = await Promise.all(promises);
+    container.innerHTML = '';
+    divs.forEach(d => container.appendChild(d));
+  } catch (e) {
+    container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+document.getElementById('batchInput').addEventListener('input', updateBatchCount);
+function updateBatchCount() {
+  const n = document.getElementById('batchInput').value.trim().split('\n').filter(Boolean).length;
+  document.getElementById('batchCount').textContent = n + ' offer' + (n !== 1 ? 's' : '') + ' queued';
+}
+
+// ══════════════════════════════════════════════
+// GENERIC MODE RUNNER
+// ══════════════════════════════════════════════
+async function runSimple(mode, inputId, resultId) {
+  const raw = document.getElementById(inputId).value.trim();
+  if (!raw) { alert('Fill in the input first'); return; }
+  if (!db.apiKey) { alert('Add your Anthropic API key'); return; }
+
+  let jd = raw;
+  const container = document.getElementById(resultId);
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Generating...</div>';
+
+  if (/^https?:\/\//i.test(raw) && serverOnline) {
+    try {
+      const scraped = await scrapeUrl(raw);
+      if (scraped && !scraped.isClosed) jd = `URL: ${raw}\n${scraped.content}`;
+    } catch {}
+  }
+
+  try {
+    const systemPrompt = await getPrompt(mode);
+    const userMsg = `${getCtx()}\n\n---\n${jd}`;
+    const div = document.createElement('div');
+    div.className = 'result-card';
+    div.innerHTML = '<div class="result-body streaming"></div>';
+    container.innerHTML = '';
+    container.appendChild(div);
+    const body = div.querySelector('.result-body');
+    await callClaude(systemPrompt, userMsg, p => { body.textContent = p; });
+    body.classList.remove('streaming');
+  } catch (e) {
+    container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════
+// CV + PDF
+// ══════════════════════════════════════════════
+async function runCvGen() {
+  const raw = document.getElementById('cvJdInput').value.trim();
+  if (!raw) { alert('Paste a job description first'); return; }
+  if (!db.apiKey) { alert('Add your Anthropic API key'); return; }
+
+  let jd = raw;
+  const container = document.getElementById('cv-gen-result');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Generating tailored CV...</div>';
+
+  if (/^https?:\/\//i.test(raw) && serverOnline) {
+    try {
+      const scraped = await scrapeUrl(raw);
+      if (scraped && !scraped.isClosed) jd = scraped.content;
+    } catch {}
+  }
+
+  try {
+    const cvPrompt = await getPrompt('cv');
+    let full = '';
+    await callClaude(cvPrompt, `${getCtx()}\n\n---\nJOB:\n${jd}`, p => {
+      full = p;
+      container.innerHTML = `<div class="result-card"><div class="result-body">${p}</div></div>`;
+    });
+    db.lastCv = full;
+    saveDb();
+    container.querySelector('.result-body').classList.remove('streaming');
+    container.querySelector('.result-card').insertAdjacentHTML('beforeend',
+      '<div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;gap:8px">' +
+      '<button class="btn btn-sm" onclick="goToCvPreview()">Preview & export PDF ↗</button>' +
+      '</div>');
+  } catch (e) {
+    container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+function goToCvPreview() {
+  const cvTabEl = document.querySelector('#panel-cv .tab:nth-child(2)');
+  cvTab(cvTabEl, 'cv-preview-tab');
+}
+
+function renderCvPreview() {
+  const src = db.lastCv || db.cv || '';
+  if (!src) {
+    document.getElementById('cv-html-preview').innerHTML = '<div class="empty"><div class="e-icon">📄</div>No CV to preview. Generate a tailored CV first.</div>';
+    return;
+  }
+  const html = markdownToHtml(src);
+  document.getElementById('cv-html-preview').innerHTML = `<div class="cv-preview" id="cv-render">${html}</div>`;
+}
+
+function markdownToHtml(md) {
+  return md
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/^(?!<[hul])(.+)$/gm, (m) => m.startsWith('<') ? m : `<p>${m}</p>`)
+    .replace(/<p><\/p>/g, '');
+}
+
+async function downloadPDF() {
+  if (!serverOnline) { alert('PDF generation requires the local server. Start it with: node server.js'); return; }
+  const previewEl = document.getElementById('cv-render');
+  if (!previewEl) { alert('Generate a CV first'); return; }
+
+  const p = db.profile || {};
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', Arial, sans-serif; font-size: 11pt; color: #1a1a18; line-height: 1.6; }
+  h1 { font-size: 22pt; font-weight: 600; margin-bottom: 3px; }
+  .contact { font-size: 10pt; color: #555; margin-bottom: 16px; }
+  h2 { font-size: 11pt; font-weight: 600; border-bottom: 1.5px solid #1a1a18; padding-bottom: 2px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: .5px; }
+  h3 { font-size: 11pt; font-weight: 600; margin-bottom: 1px; }
+  p { font-size: 11pt; margin-bottom: 5px; }
+  ul { font-size: 11pt; padding-left: 16px; margin-bottom: 8px; }
+  li { margin-bottom: 2px; }
+  strong { font-weight: 600; }
+</style>
+</head><body>${previewEl.innerHTML}</body></html>`;
+
+  try {
+    const resp = await fetch(SERVER + '/api/pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ html, filename: `cv-${(p.name || 'candidate').toLowerCase().replace(/\s+/g,'-')}.pdf` }),
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    const blob = await resp.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `cv-${(p.name || 'candidate').toLowerCase().replace(/\s+/g,'-')}.pdf`;
+    a.click();
+  } catch (e) {
+    alert('PDF error: ' + e.message);
+  }
+}
+
+// ══════════════════════════════════════════════
+// PORTAL SCANNER
+// ══════════════════════════════════════════════
+function addPortal() {
+  const name = document.getElementById('addPortalName').value.trim();
+  const url  = document.getElementById('addPortalUrl').value.trim();
+  if (!name || !url) { alert('Both name and URL required'); return; }
+  if (!db.portals) db.portals = [];
+  db.portals.push({ name, url });
+  saveDb(); renderPortals();
+  document.getElementById('addPortalName').value = '';
+  document.getElementById('addPortalUrl').value = '';
+}
+
+function removePortal(i) {
+  db.portals.splice(i, 1); saveDb(); renderPortals();
+}
+
+function renderPortals() {
+  const list = document.getElementById('portals-list');
+  if (!list) return;
+  const portals = db.portals || [];
+  if (!portals.length) { list.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0">No portals configured.</div>'; return; }
+  list.innerHTML = `<div class="portals-grid">${portals.map((p, i) => `
+    <div class="portal-card">
+      <div><div class="company">${p.name}</div><div class="portal-url">${p.url.replace('https://','')}</div></div>
+      <span class="remove-btn" onclick="removePortal(${i})">×</span>
+    </div>`).join('')}</div>`;
+}
+
+function renderPresetPortals() {
+  const el = document.getElementById('preset-list');
+  if (!el) return;
+  el.innerHTML = DEFAULT_PORTALS.map(p =>
+    `<button class="btn btn-sm" onclick="addPreset('${p.name}','${p.url}')">${p.name}</button>`
+  ).join('');
+}
+
+function addPreset(name, url) {
+  if (!db.portals) db.portals = [];
+  if (!db.portals.find(p => p.name === name)) {
+    db.portals.push({ name, url }); saveDb(); renderPortals();
+  }
+}
+
+async function runScan() {
+  if (!serverOnline) { alert('Portal scanning requires the local server. Start it with: node server.js'); return; }
+  const portals = db.portals || [];
+  if (!portals.length) { alert('Add at least one portal first'); return; }
+
+  // Switch to results tab
+  const tabs = document.querySelectorAll('#panel-scan .tab');
+  scanTab(tabs[1], 'scan-results-tab');
+
+  const output = document.getElementById('scan-output');
+  output.innerHTML = `<div class="loading"><div class="spinner"></div>Scanning ${portals.length} portals with Playwright...</div>`;
+
+  try {
+    const resp = await fetch(SERVER + '/api/scan', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ portals }),
+    });
+    const { results } = await resp.json();
+
+    const totalJobs = results.reduce((sum, r) => sum + r.jobs.length, 0);
+    output.innerHTML = `<div class="alert alert-success">Found ${totalJobs} job links across ${results.length} portals.</div>`;
+
+    for (const r of results) {
+      if (!r.jobs.length && !r.error) continue;
+      const div = document.createElement('div');
+      div.className = 'scan-result';
+      if (r.error) {
+        div.innerHTML = `<h4>${r.portal}</h4><div style="font-size:12px;color:var(--red)">Error: ${r.error}</div>`;
+      } else {
+        div.innerHTML = `<h4>${r.portal} <span style="font-size:11px;font-weight:400;color:var(--text3)">${r.jobs.length} links</span></h4>` +
+          r.jobs.slice(0, 15).map(j => `
+            <div class="scan-job">
+              <a href="${j.url}" target="_blank">${j.title}</a>
+              <button class="btn btn-sm" onclick="evalFromScan('${j.url.replace(/'/g,"\\'")}')">Evaluate</button>
+            </div>`).join('');
+      }
+      output.appendChild(div);
+    }
+  } catch (e) {
+    output.innerHTML = `<div class="alert alert-error">Scan failed: ${e.message}</div>`;
+  }
+}
+
+function evalFromScan(url) {
+  // Navigate to evaluate, fill URL
+  const evalItem = document.querySelector('[data-panel="evaluate"]');
+  nav(evalItem);
+  document.getElementById('jdInput').value = url;
+}
+
+// ══════════════════════════════════════════════
+// TRACKER
+// ══════════════════════════════════════════════
+function addToTracker({ company, score, grade, report, url }) {
+  if (!db.tracker) db.tracker = [];
+  const existing = db.tracker.find(t => t.company.toLowerCase() === company.toLowerCase());
+  const entry = {
+    id: existing?.id || (db.tracker.length + 1),
+    date: new Date().toISOString().slice(0, 10),
+    company, score, grade, url: url || '',
+    status: existing?.status || 'Evaluated',
+    report,
+  };
+  if (existing) { Object.assign(existing, entry); }
+  else { db.tracker.push(entry); }
+  saveDb();
+}
+
+function renderTracker() {
+  const wrap = document.getElementById('tracker-wrap');
+  const filter = document.getElementById('tracker-filter')?.value || '';
+  let apps = (db.tracker || []).filter(a => !filter || a.status === filter);
+  apps = [...apps].sort((a, b) => b.score - a.score);
+
+  document.getElementById('tracker-count').textContent = apps.length + ' application' + (apps.length !== 1 ? 's' : '');
+
+  if (!apps.length) {
+    wrap.innerHTML = '<div class="empty"><div class="e-icon">📋</div>No applications yet.<br>Evaluate an offer to track it here.</div>';
+    return;
+  }
+
+  wrap.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Date</th><th>Company</th><th>Score</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${apps.map((a, i) => `
+      <tr>
+        <td style="color:var(--text3);font-size:12px">${i + 1}</td>
+        <td style="color:var(--text2);font-size:12px">${a.date}</td>
+        <td style="font-weight:500">${a.company}${a.url ? ` <a href="${a.url}" target="_blank" style="font-size:11px;color:var(--blue);margin-left:4px">↗</a>` : ''}</td>
+        <td><span class="score-badge sg-${a.grade?.toLowerCase()}">${a.score}/5 ${a.grade}</span></td>
+        <td>
+          <select class="spill sp-${a.status?.toLowerCase()}" style="border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:11px;padding:0;color:inherit;font-weight:500"
+            onchange="updateStatus('${a.company}', this)">
+            ${['Evaluated','Applied','Interview','Offer','Rejected','SKIP','Discarded'].map(s =>
+              `<option value="${s}" ${a.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </td>
+        <td style="display:flex;gap:5px">
+          ${a.report ? `<button class="btn btn-sm" onclick="viewReport('${a.company}')">View</button>` : ''}
+          <button class="btn btn-sm btn-danger" onclick="deleteEntry('${a.company}')">×</button>
+        </td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function updateStatus(company, sel) {
+  const entry = db.tracker.find(t => t.company === company);
+  if (entry) { entry.status = sel.value; saveDb(); }
+  sel.className = `spill sp-${sel.value.toLowerCase()}`;
+}
+
+function viewReport(company) {
+  const entry = db.tracker.find(t => t.company === company);
+  if (!entry?.report) return;
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>${company} — Report</title>
+<style>body{font-family:system-ui;max-width:820px;margin:40px auto;padding:0 24px;line-height:1.75;color:#1a1a18}
+pre{white-space:pre-wrap;font-family:inherit;font-size:14px}
+</style></head><body><pre>${entry.report.replace(/</g,'&lt;')}</pre></body></html>`);
+}
+
+function deleteEntry(company) {
+  if (!confirm(`Remove ${company} from tracker?`)) return;
+  db.tracker = db.tracker.filter(t => t.company !== company);
+  saveDb(); renderTracker();
+}
+
+function exportTSV() {
+  const apps = db.tracker || [];
+  if (!apps.length) { alert('No applications to export'); return; }
+  const rows = [['#','Date','Company','Score','Grade','Status','URL'].join('\t'),
+    ...apps.map(a => [a.id, a.date, a.company, a.score, a.grade, a.status, a.url || ''].join('\t'))
+  ].join('\n');
+  const blob = new Blob([rows], { type: 'text/tab-separated-values' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'career-ops-tracker.tsv'; a.click();
+}
+
+// ══════════════════════════════════════════════
+// STORY BANK
+// ══════════════════════════════════════════════
+async function genStories() {
+  if (!db.apiKey) { alert('Add your Anthropic API key'); return; }
+  const container = document.getElementById('stories-container');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Extracting STAR stories from your CV...</div>';
+  try {
+    const storiesPrompt = await getPrompt('stories');
+    let full = '';
+    await callClaude(storiesPrompt, getCtx(), p => {
+      full = p;
+      container.innerHTML = `<div class="result-card"><div class="result-body">${p}</div></div>`;
+    });
+    db.stories = full; saveDb();
+    container.querySelector('.result-body').classList.remove('streaming');
+  } catch (e) {
+    container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+function renderStories() {
+  if (!db.stories) return;
+  const container = document.getElementById('stories-container');
+  container.innerHTML = `<div class="result-card"><div class="result-body">${db.stories}</div></div>`;
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadDb();
+checkServer();
+checkEvalWarns();
+loadPrompts().catch(err => console.warn('Prompt preload failed:', err.message));
+</script>
+</body>
+</html>
